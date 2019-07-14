@@ -1,20 +1,28 @@
 package disk;
 
 public class Sector {
-    String [] contain;
-    int index;
-    boolean isUsed;
+    private String contain;
+    private int index;
+    private boolean isUsed;
+    private String fileName;
 
-    public Sector(int index, int sizeOfSector) {
+    public Sector(int index) {
         this.index = index;
-        contain = new String[sizeOfSector];
     }
 
-    public String[] getContain() {
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getContain() {
         return contain;
     }
 
-    public void setContain(String[] contain) {
+    public void setContain(String contain) {
         this.contain = contain;
     }
 
@@ -32,5 +40,14 @@ public class Sector {
 
     public void setUsed(boolean used) {
         isUsed = used;
+    }
+
+    @Override
+    public String toString() {
+        if(isUsed){
+            return String.format("Sector: %d - Used by file: %s", getIndex(), getFileName());
+        }
+        else return String.format("Sector: %d - Empty", getIndex());
+
     }
 }

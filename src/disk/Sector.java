@@ -39,7 +39,7 @@ public class Sector {
     }
 
     public void setUsed(boolean used) {
-        isUsed = used;
+        this.isUsed = used;
     }
 
     @Override

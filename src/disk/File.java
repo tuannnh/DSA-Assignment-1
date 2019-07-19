@@ -36,7 +36,7 @@ public class File {
                 System.out.print(sectorList.get(i));
                             }
             else{
-                System.out.println(sectorList.get(i) + ", ");
+                System.out.print(sectorList.get(i) + ", ");
             }
         }
         return "";

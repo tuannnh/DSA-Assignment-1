@@ -149,54 +149,76 @@ public class Disk {
 
     }
 
+    private void moveSector(File aFile, int indexDrive, int fileSector) {
+        String contain = "", fname = "";
+        contain = drive.get(aFile.getSectorList().get(fileSector)).getContain();
+        fname = drive.get(aFile.getSectorList().get(fileSector)).getFileName();
+        System.out.println("Set sector: "+ drive.get(aFile.getSectorList().get(fileSector))+" used:" + false);
+        drive.get(aFile.getSectorList().get(fileSector)).setUsed(false);
+
+        drive.get(indexDrive).setContain(contain);
+
+        System.out.println("Set Sector:" + drive.get(indexDrive).getIndex()+" used:"+true);
+        drive.get(indexDrive).setUsed(true);
+
+        System.out.println("Set Sector:"+drive.get(indexDrive).getIndex()+" File name:" + fname);
+        drive.get(indexDrive).setFileName(fname);
+        aFile.getSectorList().set(fileSector, indexDrive);
+    }
+
+
+
     public void Defragmented() {
+        if (CheckEmptyDrive()) {
+            System.out.println("The Disk is Empty! Cannot defragment");
+            return;
+        }
         String contain = "", fname = "";
         boolean isMoved;
         int indexDrive = 0;
-        int fileSector;
         for (File aFile : fileList) {
-            String fileName = aFile.getFileName();
-            fileSector = 0;
-            while (fileSector < aFile.getSectorList().size()) {
+            for (int i = 0; i < aFile.getSectorList().size(); i++) {
                 isMoved = false;
                 if (!drive.get(indexDrive).isUsed()) {
-                    contain = drive.get(aFile.getSectorList().get(fileSector)).getContain();
-                    fname = drive.get(aFile.getSectorList().get(fileSector)).getFileName();
-                    drive.get(indexDrive).setContain(contain);
-                    drive.get(indexDrive).setUsed(true);
-                    drive.get(indexDrive).setFileName(fname);
-                    drive.get(aFile.getSectorList().get(fileSector)).setUsed(false);
-                    aFile.getSectorList().set(fileSector, indexDrive);
+                    System.out.println("Move new file name:"+aFile.getFileName()+"to sector: " + indexDrive);
+                    moveSector(aFile, indexDrive, i);
                     indexDrive++;
-                    fileSector++;
                 } else if (drive.get(indexDrive).isUsed()) {
-                    if (drive.get(indexDrive).getIndex() == aFile.getSectorList().get(fileSector)) {
+                    if (drive.get(indexDrive).getIndex() == aFile.getSectorList().get(i) &&
+                    drive.get(indexDrive).getFileName().equals(aFile.getFileName())) {
+                        System.out.println("Just increase index++");
                         indexDrive++;
-                        fileSector++;
                     } else {
-                        int i = indexDrive + 1;
+                        int temp = indexDrive;
                         while (!isMoved) {
-                            if (!drive.get(i).isUsed()) {
-                                drive.get(i).setFileName(drive.get(indexDrive).getFileName());
-                                drive.get(i).setContain(drive.get(indexDrive).getContain());
-                                drive.get(i).setUsed(true);
+                            if (!drive.get(temp).isUsed()) {
+                                System.out.println("Move current file name: "+drive.get(indexDrive).getFileName()+"to sector:"+drive.get(temp).getIndex());
+                                drive.get(temp).setFileName(drive.get(indexDrive).getFileName());
+                                drive.get(temp).setContain(drive.get(indexDrive).getContain());
+                                for (int j = 0; j < fileList.size(); j++) {
+                                    for (int k = 0; k < fileList.get(j).getSectorList().size(); k++) {
+                                        if(drive.get(indexDrive).getIndex() == fileList.get(j).getSectorList().get(k)){
+                                            fileList.get(j).getSectorList().set(k,temp);
+                                        }
+                                    }
+                                }
+                                //Update file list sector
+                                System.out.println("Set sector:"+drive.get(temp).getIndex()+" used:"+true);
+                                drive.get(temp).setUsed(true);
+                                System.out.println("Move new file name:"+aFile.getFileName()+"to sector: " + indexDrive);
+                                moveSector(aFile, indexDrive, i);
+                                indexDrive++;
                                 isMoved = true;
+                            } else {
+                                temp++;
                             }
-                            i++;
                         }
-                        contain = drive.get(aFile.getSectorList().get(fileSector)).getContain();
-                        fname = drive.get(aFile.getSectorList().get(fileSector)).getFileName();
-                        drive.get(indexDrive).setContain(contain);
-                        drive.get(indexDrive).setUsed(true);
-                        drive.get(indexDrive).setFileName(fname);
-                        drive.get(aFile.getSectorList().get(fileSector)).setUsed(false);
-                        aFile.getSectorList().set(fileSector, indexDrive);
-                        indexDrive++;
-                        fileSector++;
+
                     }
 
                 }
             }
+
         }
     }
 }

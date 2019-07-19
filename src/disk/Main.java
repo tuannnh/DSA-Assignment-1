@@ -6,6 +6,7 @@ public class Main {
     public static void main(String[] args) {
         Disk drive = new Disk();
         Scanner sc = new Scanner(System.in);
+        String s;
         int choice;
         do {
             System.out.println("1. Create disk");
@@ -14,8 +15,11 @@ public class Main {
             System.out.println("4. View content of a file");
             System.out.println("5. Print");
             System.out.println("6. Defragment");
-
-            choice = Integer.parseInt(sc.nextLine());
+            System.out.println("7. Exit");
+            do{
+                s = sc.nextLine().trim();
+            }while(!s.matches("[1-7]{1}"));
+            choice = Integer.parseInt(s);
             switch (choice) {
                 case 1:
                     drive.CreateDrives();
